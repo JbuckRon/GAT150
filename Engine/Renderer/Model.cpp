@@ -1,5 +1,8 @@
 #include "Model.h"
 #include "../Core/File.h"
+#include "Core/Logger.h"
+#include "Math/Transform.h"
+#include "Math/MathUtils.h"
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -12,14 +15,18 @@ namespace neu
 		m_radius = CalculateRadius();
 	}
 
-	void Model::Draw(Renderer& renderer, const Vector2& position,float angle,  float scale)
+	bool Model::Create(const std::string& filename, ...)
 	{
-		/*neu::Color color;
-		color.r = neu::random(256);
-		color.g = neu::random(256);
-		color.b = neu::random(256);
-		color.a = 255;*/
+		if (!Load(filename))
+		{
+			LOG("Error could not read file %s", filename.c_str());
+			return false;
+		}
+		return true;
+	}
 
+	void Model::Draw(Renderer& renderer, const Vector2& position,float angle,  const Vector2& scale)
+	{
 		//draw model
 		for (int i = 0; i < m_points.size() - 1; i++)
 		{
@@ -29,11 +36,27 @@ namespace neu
 			renderer.DrawLine(p1, p2, m_color);
 		}
 	}
-	void Model::Load(const std::string filename)
+	void Model::Draw(Renderer& renderer, const Transform& transform)
+	{
+		Matrix3x3 mx = transform.matrix;
+
+		for (int i = 0; i < m_points.size() - 1; i++)
+		{
+			neu::Vector2 p1 = mx * m_points[i];
+			neu::Vector2 p2 = mx * m_points[i + 1];
+
+			renderer.DrawLine(p1, p2, m_color);
+		}
+	}
+	bool Model::Load(const std::string filename)
 	{
 		std::string buffer;
 
-		neu::ReadFile(filename, buffer);
+		if (!neu::ReadFile(filename, buffer))
+		{
+			LOG("Error could not read file %s", filename.c_str());
+			return false;
+		}
 
 		std::istringstream stream(buffer);
 		stream >> m_color;
@@ -52,6 +75,7 @@ namespace neu
 
 			m_points.push_back(point);
 		}
+		return true;
 	}
 	float Model::CalculateRadius()
 	{

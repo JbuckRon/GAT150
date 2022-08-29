@@ -1,20 +1,24 @@
 #include "Font.h"
 #include <SDL_ttf.h>
 
-neu::Font::Font(const std::string& filename, int fontSize)
+namespace neu
 {
-	Load(filename, fontSize);
-}
-
-neu::Font::~Font()
-{
-	if (m_ttfFont != NULL)
+	Font::Font(const std::string& filename, int fontSize)
 	{
-		TTF_CloseFont(m_ttfFont);
+		Load(filename, fontSize);
 	}
-}
 
-void neu::Font::Load(const std::string& filename, int fontSize)
-{
-	m_ttfFont = TTF_OpenFont(filename.c_str(), fontSize);
+	Font::~Font()
+	{
+		if (m_ttfFont != NULL)
+		{
+			TTF_CloseFont(m_ttfFont);
+		}
+	}
+
+	void Font::Load(const std::string& filename, int fontSize)
+	{
+		m_ttfFont = TTF_OpenFont(filename.c_str(), fontSize);
+	}
+
 }

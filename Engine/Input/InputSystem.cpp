@@ -1,4 +1,5 @@
 #include "InputSystem.h"
+#include "Core/Logger.h"
 #include <iostream>
 #include <SDL.h>
 

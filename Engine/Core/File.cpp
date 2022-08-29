@@ -1,4 +1,5 @@
 #include "File.h"
+#include "Logger.h"
 #include <fstream>
 #include <filesystem>
 namespace neu 
@@ -24,8 +25,11 @@ namespace neu
 	}
 	bool ReadFile(const std::string& pathname, std::string& buffer)
 	{
-		if (!FileExists(pathname)) return false;
-
+		if (!FileExists(pathname))
+		{
+			LOG("Error could not read file %s", pathname.c_str());
+			return false;
+		}
 		size_t size;
 		GetFileSize(pathname, size);
 		buffer.resize(size);

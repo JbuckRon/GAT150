@@ -1,6 +1,10 @@
 #include "Renderer.h"
+#include "Texture.h"
+#include "Math/MathUtils.h"
+#include "Math/Transform.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_Image.h>
 
 
 namespace neu
@@ -12,6 +16,7 @@ namespace neu
 	void Renderer::Initialize()
 	{
 		SDL_Init(SDL_INIT_VIDEO);
+		IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 		TTF_Init();
 	}
 
@@ -20,6 +25,7 @@ namespace neu
 		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(m_window);
 		TTF_Quit();
+		IMG_Quit();
 	}
 
 	void Renderer::CreateWindow(const char* name, int width, int height)
@@ -39,7 +45,6 @@ namespace neu
 
 	void Renderer::EndFrame()
 	{
-
 		SDL_RenderPresent(m_renderer);
 	}
 
@@ -67,4 +72,42 @@ namespace neu
 		SDL_RenderDrawPointF(m_renderer, v.x, v.y);
 	}
 
+	void Renderer::Draw(std::shared_ptr<Texture> texture, const Vector2& position, float angle, const Vector2& scale, const Vector2& regisration)
+	{
+		Vector2 size = texture->GetSize();
+		size = size * scale;
+
+		Vector2 origin = size * regisration;
+		Vector2 tposition = position - origin;
+
+		SDL_Rect dest;
+		// !! make sure to cast to int to prevent compiler warnings
+		dest.x = (int)tposition.x;// !! set to position x
+		dest.y = (int)tposition.y;// !! set to position y
+		dest.w = (int)size.x;// !! set to size x
+		dest.h = (int)size.y;// !! set to size y
+
+		SDL_Point center{ (int)origin.x, (int)origin.y };
+
+			SDL_RenderCopyEx(m_renderer, texture -> m_texture, nullptr, &dest, angle, &center, SDL_FLIP_HORIZONTAL);
+	}
+	void Renderer::Draw(std::shared_ptr<Texture> texture, const Transform& transform, const Vector2& registration)
+	{
+		Vector2 size = texture->GetSize();
+		size = size * transform.scale;
+
+		Vector2 origin = size * registration;
+		Vector2 tposition = transform.scale - origin;
+
+		SDL_Rect dest;
+		// !! make sure to cast to int to prevent compiler warnings
+		dest.x = (int)tposition.x;// !! set to position x
+		dest.y = (int)tposition.y;// !! set to position y
+		dest.w = (int)size.x;// !! set to size x
+		dest.h = (int)size.y;// !! set to size y
+
+		SDL_Point center{ (int)origin.x, (int)origin.y };
+
+		SDL_RenderCopyEx(m_renderer, texture->m_texture, nullptr, &dest, transform.rotation, &center, SDL_FLIP_HORIZONTAL);
+	}
 }

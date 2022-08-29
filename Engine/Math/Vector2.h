@@ -15,6 +15,9 @@ namespace neu
 		Vector2(int x, int y) : x{ (float)x }, y{ (float)y } {}
 
 		void Set(float x, float y) { this->x = x; this->y = y; }
+		float operator [] (size_t index) const { return (&x)[index]; }
+		float& operator [] (size_t index) { return (&x)[index]; }
+
 
 		//arithmetic operators
 		// 
@@ -61,25 +64,25 @@ namespace neu
 		Vector2 Normalized();
 		void Normalize();
 
+		float Dot(const Vector2& v);
+		float GetAngleBetween(const Vector2& v);
+		float GetSignedAngleBetween(const Vector2& v);
+
 		float GetAngle();
 		static Vector2 Rotate(const Vector2 v, float angle);
 
-		
+		static const Vector2 one;
+		static const Vector2 zero;
+		static const Vector2 up;
+		static const Vector2 down;
+		static const Vector2 left;
+		static const Vector2 right;
 	};
 
-	inline std::istream& operator >> (std::istream& stream, Vector2& v)
-	{
-		std::string line;
-		std::getline(stream, line);
+	std::istream& operator >> (std::istream& stream, Vector2& v);
+	std::ostream& operator << (std::ostream& stream, const Vector2& v);
+	
 
-		std::string xs = line.substr(line.find("{") + 1, line.find(",") - line.find("{") + 1);
-		v.x = std::stof(xs);
-		
-		std::string ys = line.substr(line.find(",") + 1, line.find("}") - line.find(",") + 1);
-		v.y = std::stof(ys);
-
-		return stream;
-	}
 
 	inline float Vector2::LengthSqr() { return x * x + y * y; }
 	inline float Vector2::Length() { return std::sqrt(x * x + y * y); }
@@ -98,12 +101,29 @@ namespace neu
 	{
 		float length = Length();
 
-		return Vector2{ x / length, y / length};
+		return (length == 0) ? Vector2{ 1, 0 } : Vector2{ x / length, y / length };
 	}
 
 	inline void Vector2::Normalize()
 	{
 		(*this) /= Length();
+	}
+
+	inline float Vector2::Dot(const Vector2& v)
+	{
+		return x * v.x + y * v.y;
+	}
+
+	inline float Vector2::GetAngleBetween(const Vector2& v)
+	{
+		return std::acos(Dot(v));
+	}
+
+	inline float Vector2::GetSignedAngleBetween(const Vector2& v)
+	{
+		float y = x * v.y - y * v.x; // perpendicular dot product
+		float x = x * v.x + y * v.y; // dor product
+		return std::atan2(y, x);
 	}
 
 	inline float Vector2::GetAngle()

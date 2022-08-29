@@ -1,4 +1,5 @@
 #pragma once
+#include "Texture.h"
 #include "../Math/Vector2.h"
 #include "../Math/Color.h"
 
@@ -8,6 +9,8 @@ struct SDL_Window;
 
 namespace neu
 {
+	class Texture;
+	struct Transform;
 	class Renderer
 	{
 	public:
@@ -26,11 +29,14 @@ namespace neu
 		void DrawLine(const Vector2& v1, const Vector2& v2, const Color& color);
 		void DrawPoint(float x, float y);
 		void DrawPoint(const Vector2& v, const Color& color);
+		void Draw(std::shared_ptr<Texture> texture, const Vector2& position, float angle = 0, const Vector2& scale = Vector2{ 1, 1 }, const Vector2& regisration = Vector2{0.5f, 0.5f});
+		void Draw(std::shared_ptr<Texture> texture, const Transform& transform, const Vector2& registration = Vector2{ 0.5f, 0.5f });
 
 		int GetWidth() { return m_width; }
 		int GetHeight() { return m_height; }
 
 		friend class Text;
+		friend class Texture;
 	private:
 		int m_width = 0;
 		int m_height = 0;
