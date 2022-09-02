@@ -1,9 +1,11 @@
 #pragma once
+#include "CharacterComponent.h"
+#include "Framework/Event.h"
 #include "Framework/Component.h"
 #include "Physics/Collision.h"
 namespace neu
 {
-	class PlayerComponent : public Component, public Icollision
+	class PlayerComponent : public CharacterComponent
 	{
 	public:
 		PlayerComponent() = default;
@@ -13,6 +15,7 @@ namespace neu
 		void Initialize() override;
 		void Update() override;
 
+		virtual void OnNotify(const Event& event) override;
 		virtual void OnCollisionEnter(Actor* other) override;
 		virtual void OnCollisionExit(Actor* other) override;
 
@@ -20,6 +23,9 @@ namespace neu
 		virtual bool Read(const rapidjson::Value& value) override;
 
 	public:
-		float speed = 0;
+		int m_groundCount = 0;
+
+		float jump = 300.0f;
+
 	};
 }

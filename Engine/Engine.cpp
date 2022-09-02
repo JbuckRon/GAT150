@@ -14,6 +14,7 @@ namespace neu
 	{
 		REGISTER_CLASS(Actor);
 		REGISTER_CLASS(AudioComponent);
+		REGISTER_CLASS(CameraComponent);
 		REGISTER_CLASS(ModelComponent);
 		REGISTER_CLASS(PhysicsComponent);
 		REGISTER_CLASS(PlayerComponent);
@@ -23,7 +24,6 @@ namespace neu
 		REGISTER_CLASS(RBPhysicsComponent);
 		REGISTER_CLASS(SpriteAnimComponent);
 		REGISTER_CLASS(TextComponent);
-		
 	}
 
 }

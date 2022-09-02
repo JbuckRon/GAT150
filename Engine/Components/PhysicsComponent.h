@@ -20,6 +20,7 @@ namespace neu
 		Vector2 m_velocity;
 		Vector2 m_acceleration;
 
+
 		float m_damping = 1;
 
 	};

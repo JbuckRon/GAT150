@@ -5,16 +5,17 @@ namespace neu
 {
 	void PlayerComponent::Initialize()
 	{
-		auto component = m_owner->GetComponent<CollisionComponent>();
+		CharacterComponent::Initialize();
 
-		if (component)
-		{
-			component->SetCollisionEnter(std::bind(&PlayerComponent::OnCollisionEnter, this, std::placeholders::_1));
-			component->SetCollisionExit(std::bind(&PlayerComponent::OnCollisionExit, this, std::placeholders::_1));
-		}
 	}
 	void PlayerComponent::Update()
 	{
+		auto camera = m_owner->GetScene()->GetActorFromName("Camera");
+		if (camera)
+		{
+			camera->m_transform.position = math::Lerp(camera -> m_transform.position, m_owner->m_transform.position, 2 * g_time.deltaTime);
+		}
+
 		Vector2 direction = Vector2::zero;
 
 		if (g_inputSystem.GetKeyState(key_left) == InputSystem::KeyState::Held)
@@ -29,20 +30,37 @@ namespace neu
 			direction = Vector2::right;
 		}
 		
+		Vector2 velocity;
 		auto component = m_owner->GetComponent<PhysicsComponent>();
-
 		if (component)
 		{
-			component->ApplyForce(direction * speed);
-
+			// if in the air (m_groundCount == 0) then reduce force
+			float multiplier = (m_groundCount > 0) ? 1 : 0.2f;
+			component->ApplyForce(direction * speed * multiplier);
+			velocity = component->m_velocity;
 		}
 
-		if (g_inputSystem.GetKeyState(key_space) == InputSystem::KeyState::Pressed)
+		if (m_groundCount > 0 && g_inputSystem.GetKeyState(key_space) == InputSystem::KeyState::Pressed)
 		{
+			neu::g_audioSystem.PlayAudio("jump");
+
 			auto component = m_owner->GetComponent<PhysicsComponent>();
 			if (component)
 			{
 				component->ApplyForce(Vector2::up * 500);
+			}
+			auto animComponent = m_owner->GetComponent<SpriteAnimComponent>();
+			if (animComponent)
+			{
+				if (velocity.x != 0) animComponent->SetFlipHorizontal(velocity.x < 0);
+				if (std::fabs(velocity.x) > 0)
+				{
+					animComponent->SetSequence("run");
+				}
+				else
+				{
+					animComponent->SetSequence("idle");
+				}
 			}
 
 		}
@@ -79,10 +97,35 @@ namespace neu
 		//	}
 		//}
 	}
+	void PlayerComponent::OnNotify(const Event& event)
+	{
+		if (event.name == "EVENT_DAMAGE")
+		{
+			health -= std::get<float>(event.data);
+			if (health <= 0)
+			{
+				m_owner->SetDestroy();
+
+				Event event;
+				event.name = "EVENT_PLAYER_DEAD";
+
+				g_eventManager.Notify(event);
+			}
+		}
+		
+	}
 	void PlayerComponent::OnCollisionEnter(Actor* other)
 	{
+
+		if (other->GetTag() == "Ground")
+		{
+			m_groundCount++;
+		}
+
 		if (other->GetName() == "Coin")
 		{
+			neu::g_audioSystem.PlayAudio("coin");
+
 			Event event;
 			event.name = "EVENT_ADD_POINTS";
 			event.data = 100;
@@ -94,6 +137,11 @@ namespace neu
 	}
 	void PlayerComponent::OnCollisionExit(Actor* other)
 	{
+		if (other->GetTag() == "Ground")
+		{
+			m_groundCount--;
+		}
+
 		std::cout << "player exit\n";
 	}
 	bool PlayerComponent::Write(const rapidjson::Value& value) const
@@ -102,7 +150,11 @@ namespace neu
 	}
 	bool PlayerComponent::Read(const rapidjson::Value& value)
 	{
-		READ_DATA(value, speed);
+		CharacterComponent::Read(value);
+
+		READ_DATA(value, jump);
+		READ_DATA(value, health);
+		READ_DATA(value, damage);
 		return true;
 	}
 }

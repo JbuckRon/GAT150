@@ -25,6 +25,8 @@
 #include "Components/RBPhysicsComponent.h"
 #include "Components/SpriteAnimComponent.h"
 #include "Components/TextComponent.h"
+#include "Components/CharacterComponent.h"
+#include "Components/CameraComponent.h"
 
 #include "Framework/Scene.h"
 #include "Framework/Game.h"

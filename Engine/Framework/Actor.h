@@ -15,7 +15,7 @@ namespace neu
 	{
 	public:
 		Actor() = default;
-		Actor(const Actor& other) {}
+		Actor(const Actor& other);
 		Actor(const Transform& transform) : m_transform{ transform } {};
 
 		CLASS_DECLARATION(Actor)
@@ -37,8 +37,8 @@ namespace neu
 		virtual void OnCollision(Actor* other) {};
 
 		float GetRadius() { return 0; }//m_model.GetRadius()* std::max(m_transform.scale.x, m_transform.scale.y); }
-		std::string& GetTag() { return m_tag; }
-		void SetTag(const std::string& tag) { this->m_tag = tag; }
+		std::string& GetTag() { return tag; }
+		void SetTag(const std::string& tag) { this->tag = tag; }
 
 		const std::string& GetName() { return name; }
 		void SetName(const std::string& name) { this->name = name; }
@@ -57,8 +57,10 @@ namespace neu
 		Transform m_transform;
 	protected:
 		std::string name;
-		std::string m_tag;
+		std::string tag;
 		bool active = true;
+
+		float lifespan = 0;
 
 		bool m_destroy = false;
 		//physics

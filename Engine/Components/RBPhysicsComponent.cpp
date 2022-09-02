@@ -1,3 +1,4 @@
+#include "Physics/PhysicsSystem.h"
 #include "RBPhysicsComponent.h"
 #include "Engine.h"
 
@@ -7,6 +8,7 @@ namespace neu
 	{
 		if (m_body)
 		{
+			m_body->SetEnabled(false);
 			g_physicsSystem.DestroyBody(m_body);
 		}
 	}
@@ -21,7 +23,9 @@ namespace neu
 	{
 		Vector2 position = B2VEC2_TO_VECTOR2(m_body->GetPosition());
 		m_owner->m_transform.position = PhysicsSystem::WorldToScreen(position);
-		m_owner->m_transform.rotation = m_body->GetAngle();
+		m_owner->m_transform.rotation = math::RadToDeg(m_body->GetAngle());
+
+		m_velocity = B2VEC2_TO_VECTOR2(m_body->GetLinearVelocity());
 	}
 
 	void RBPhysicsComponent::ApplyForce(const Vector2& force)

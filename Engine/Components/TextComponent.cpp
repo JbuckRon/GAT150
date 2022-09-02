@@ -1,4 +1,7 @@
 #include "TextComponent.h"
+#include "SDL_Surface.h"
+#include <SDL.h>
+#include <SDL_image.h>
 #include "Engine.h"
 
 namespace neu

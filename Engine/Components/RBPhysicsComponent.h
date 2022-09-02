@@ -22,6 +22,7 @@ namespace neu
 		friend class CollisionComponent;
 
 	private:
+		//Vector2 velocity;
 		PhysicsSystem::RigidBodyData data;
 		b2Body* m_body = nullptr;
 	};

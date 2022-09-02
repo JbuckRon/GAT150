@@ -1,7 +1,9 @@
 #pragma once
 #include "Texture.h"
+#include "Math/Rect.h"
 #include "../Math/Vector2.h"
 #include "../Math/Color.h"
+#include "../Math/Matrix3x3.h"
 
 
 struct SDL_Renderer;
@@ -31,9 +33,13 @@ namespace neu
 		void DrawPoint(const Vector2& v, const Color& color);
 		void Draw(std::shared_ptr<Texture> texture, const Vector2& position, float angle = 0, const Vector2& scale = Vector2{ 1, 1 }, const Vector2& regisration = Vector2{0.5f, 0.5f});
 		void Draw(std::shared_ptr<Texture> texture, const Transform& transform, const Vector2& registration = Vector2{ 0.5f, 0.5f });
+		void Draw(std::shared_ptr<Texture> texture, const Rect& source, const Transform& transform, const Vector2& registration = Vector2{ 0.5f, 0.5f }, bool flipH = false);
 
 		int GetWidth() { return m_width; }
 		int GetHeight() { return m_height; }
+
+		void SetViewMatrix(const Matrix3x3& view) { m_view = view; }
+		void SetViewportMatrix(const Matrix3x3& viewport) { m_viewport = viewport; }
 
 		friend class Text;
 		friend class Texture;
@@ -44,6 +50,9 @@ namespace neu
 
 		SDL_Renderer* m_renderer{ nullptr };
 		SDL_Window* m_window{ nullptr };
+
+		Matrix3x3 m_view;
+		Matrix3x3 m_viewport;
 
 	};
 }

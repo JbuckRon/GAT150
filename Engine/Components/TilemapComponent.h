@@ -8,7 +8,7 @@ namespace neu
 	class TilemapComponent : public Component
 	{
 	public:
-		CLASS_DECLARATION(TilemapComponent);
+		CLASS_DECLARATION(TilemapComponent)
 
 		virtual void Initialize() override;
 		virtual void Update() override;

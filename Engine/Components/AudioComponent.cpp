@@ -23,7 +23,7 @@ namespace neu
 	void AudioComponent::Play()
 	{
 		m_channel.Stop();
-		m_channel = g_audioSystem.PlayAudio(m_soundName, volume, pitch, loop);
+		m_channel = g_audioSystem.PlayAudio(sound_name, volume, pitch, loop);
 		
 	}
 

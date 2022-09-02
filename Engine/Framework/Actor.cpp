@@ -1,5 +1,6 @@
 #include "Actor.h"
 #include "Factory.h"
+#include "Engine.h"
 #include "Components/RenderComponent.h"
 
 namespace neu
@@ -8,7 +9,9 @@ namespace neu
 	{
 		name = other.name;
 
-		m_tag = other.m_tag;
+		tag = other.tag;
+
+		lifespan = other.lifespan;
 
 		m_transform = other.m_transform;
 
@@ -30,6 +33,15 @@ namespace neu
 	{
 		if (!active) return;
 
+		if (lifespan != 0)
+		{
+			lifespan -= g_time.deltaTime;
+			if (lifespan <= 0)
+			{
+				SetDestroy();
+			}
+		}
+
 		for (auto& component : m_components)
 		{
 			component->Update();
@@ -47,6 +59,8 @@ namespace neu
 		else {
 			m_transform.Update();
 		}
+
+
 
 	}
 	void Actor::Draw(Renderer& renderer)
@@ -69,13 +83,14 @@ namespace neu
 	}
 	bool Actor::Write(const rapidjson::Value& value) const
 	{
-
 		return true;
 	}
 	bool Actor::Read(const rapidjson::Value& value)
 	{
-		READ_DATA(value, m_tag);
+		READ_DATA(value, tag);
 		READ_DATA(value, name);
+		READ_DATA(value, active);
+		READ_DATA(value, lifespan);
 
 		if (value.HasMember("transform")) m_transform.Read(value["transform"]);
 

@@ -14,7 +14,7 @@ namespace neu
 	public:
 		CLASS_DECLARATION(TextComponent)
 
-			virtual void Update() override;
+		virtual void Update() override;
 		virtual void Draw(Renderer& renderer) override;
 
 		void SetText(const std::string& text);

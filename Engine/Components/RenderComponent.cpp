@@ -8,7 +8,7 @@ namespace neu
 		return true;
 	}
 	
-	bool RenderComponent::read(const rapidjson::Value& value)
+	bool RenderComponent::Read(const rapidjson::Value& value)
 	{
 		READ_DATA(value, sort_order);
 		return true;

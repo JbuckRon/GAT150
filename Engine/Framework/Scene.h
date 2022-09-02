@@ -63,10 +63,10 @@ namespace neu
 	{
 		for(auto& actor : m_actors)
 		{
-			if (name == actor.GetName())
-				{
+			if (name == actor->GetName())
+			{
 				return dynamic_cast<T*>(actor.get());
-					}
+			}
 		}
 		return nullptr;
 	}
@@ -77,7 +77,7 @@ namespace neu
 		std::vector<T*> result;
 		for (auto& actor : m_actors)
 		{
-			if (name == actor.GetName())
+			if (actor->GetTag() == tag)
 				{
 				T * tagActor = dynamic_cast<T*>(actor.get());
 				if (tagActor) result.push_back(tagActor);

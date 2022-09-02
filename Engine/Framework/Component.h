@@ -12,6 +12,7 @@ namespace neu
 		virtual void Initialize() override {}
 		virtual void Update() = 0;
 
+
 		friend class Actor;
 
 	protected:

@@ -99,7 +99,7 @@ namespace neu
 	}
 	void Scene::RemoveAll()
 	{
-		for (auto& actor: m_actors) {}
+		for (auto& actor : m_actors) { actor->SetDestroy(); }
 		m_actors.clear();
 	}
 	// add removeAll()

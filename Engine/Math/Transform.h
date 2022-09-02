@@ -2,20 +2,31 @@
 #include "Vector2.h"
 #include "Math/Matrix3x3.h"
 #include "Math/MathUtils.h"
+#include "Serialization/Serializable.h"
 namespace neu
 {
-	struct Transform
+	struct Transform : public Iserializable
 	{
-		Vector2 position{400, 300};
-		float rotation;
+		Vector2 position;
+		float rotation {0};
 		Vector2 scale{ 1, 1 };
 
 		Matrix3x3 matrix;
 
+		Transform() = default;
+		Transform(const Vector2& position, float rotation, const Vector2& scale) :
+			position { position },
+			rotation { rotation},
+			scale { scale }
+		{}
+			 
+		virtual bool Write(const rapidjson::Value& value) const override;
+		virtual bool Read(const rapidjson::Value& value) override;
+
 		void Update()
 		{
 			Matrix3x3 mxScale = Matrix3x3::CreateScale(scale);
-			Matrix3x3 mxRotation = Matrix3x3::CreateScale(math::DegToRad(rotation));
+			Matrix3x3 mxRotation = Matrix3x3::CreateRotation(math::DegToRad(rotation));
 			Matrix3x3 mxTranslation = Matrix3x3::CreateTranslation(position);
 
 			matrix = { mxTranslation * mxRotation * mxScale };
@@ -24,7 +35,7 @@ namespace neu
 		void Update(const Matrix3x3& parent)
 		{
 			Matrix3x3 mxScale = Matrix3x3::CreateScale(scale);
-			Matrix3x3 mxRotation = Matrix3x3::CreateScale(math::DegToRad(rotation));
+			Matrix3x3 mxRotation = Matrix3x3::CreateRotation(math::DegToRad(rotation));
 			Matrix3x3 mxTranslation = Matrix3x3::CreateTranslation(position);
 
 			matrix = { mxTranslation * mxRotation * mxScale };
@@ -34,7 +45,7 @@ namespace neu
 		operator Matrix3x3 () const
 		{
 			Matrix3x3 mxScale = Matrix3x3::CreateScale(scale);
-			Matrix3x3 mxRotation = Matrix3x3::CreateScale(math::DegToRad(rotation));
+			Matrix3x3 mxRotation = Matrix3x3::CreateRotation(math::DegToRad(rotation));
 			Matrix3x3 mxTranslation = Matrix3x3::CreateTranslation(position);
 
 			return { mxTranslation * mxRotation * mxScale };

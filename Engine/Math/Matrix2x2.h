@@ -70,8 +70,11 @@ namespace neu
 	{
 		Matrix2x2 mx;
 
-		mx[0] = Vector2{ std::cos(radians), -std::sin(radians)};
-		mx[1] = Vector2{ std::sin(radians),  std::cos(radians)};
+		float c = std::cos(radians);
+		float s = std::sin(radians);
+
+		mx[0] = Vector2	{c, -s};
+		mx[1] = Vector2{ s,  c};
 
 		return mx;
 	}
